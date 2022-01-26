@@ -10,9 +10,10 @@ import (
 )
 
 var (
-	CommandHello = &cli.Command{
-		Name:  "hello",
-		Usage: "say hello",
+	CommandSimple = &cli.Command{
+		Name:    "simple",
+		Aliases: []string{"s"},
+		Usage:   "simple statistics",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "path",

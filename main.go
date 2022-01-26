@@ -41,6 +41,7 @@ func main() {
 	app.Usage = "Statistics in Go - CLI tool for quick statistical analysis of data streams"
 	app.Commands = []*cli.Command{
 		commands.CommandHello,
+		commands.CommandSimple,
 		im,
 		{
 			Name:    "version",
