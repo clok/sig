@@ -1,0 +1,58 @@
+# This is an example .goreleaser.yml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+project_name: sig
+
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod download
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+
+archives:
+  - wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: desc
+  filters:
+    exclude:
+      - '^Merge'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+dockers:
+  - ids:
+      - sig
+    image_templates:
+      - "ghcr.io/clok/sig:{{ .RawVersion }}"
+      - "ghcr.io/clok/sig:latest"
+
+brews:
+  - tap:
+      owner: clok
+      name: homebrew-sig
+    homepage: "https://clokwork.net/sig/"
+    description: "CLI tool for checking IPs against CIDR blocks"
+    license: "MIT"
+    test: |
+      system "#{bin}/sig --help"
+    install: |
+      bin.install "sig"
