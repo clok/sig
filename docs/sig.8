@@ -1,0 +1,52 @@
+.nh
+.TH sig 8
+
+.SH NAME
+.PP
+sig \- Statistics in Go \- CLI tool for quick statistical analysis of data streams
+
+
+.SH SYNOPSIS
+.PP
+sig
+
+
+.SH COMMAND TREE
+.RS
+.IP \(bu 2
+simple, s
+\[la]#simple-s\[ra]
+.IP \(bu 2
+version, v
+\[la]#version-v\[ra]
+
+.RE
+
+.PP
+\fBUsage\fP:
+
+.PP
+.RS
+
+.nf
+sig [GLOBAL OPTIONS] command [COMMAND OPTIONS] [ARGUMENTS...]
+
+.fi
+.RE
+
+
+.SH COMMANDS
+.SH simple, s
+.PP
+simple statistics
+
+.PP
+\fB\-\-path, \-p\fP="": File path to files to stream, can be a glob. If not set, a pipe is assumed.
+
+.PP
+\fB\-\-transpose, \-t\fP: transpose table output
+
+.SH version, v
+.PP
+Print version info
+
