@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/clok/cdocs v1.2.0
 	github.com/clok/kemba v1.1.1
+	github.com/montanaflynn/stats v0.6.6
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/yargevad/filepathx v1.0.0

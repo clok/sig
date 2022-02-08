@@ -2,9 +2,6 @@ package commands
 
 import (
 	"bufio"
-	"fmt"
-	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 
@@ -14,61 +11,78 @@ import (
 func Test_processLine(t *testing.T) {
 	is := assert.New(t)
 
-	t.Run("prepend hello [single]", func(t *testing.T) {
-		rescueStdout := os.Stdout
-		r, w, _ := os.Pipe()
-		os.Stdout = w
-
-		input := "Test"
-		err := processLine(&processLineInput{
-			output: []rune(input),
+	t.Run("parses number [simple]", func(t *testing.T) {
+		input := "1.234"
+		f, err := processLine(&processLineInput{
+			line: []rune(input),
 		})
 		is.NoError(err)
-
-		_ = w.Close()
-		out, _ := ioutil.ReadAll(r)
-		os.Stdout = rescueStdout
-		is.Equal(fmt.Sprintf("hello: %s\n", input), string(out))
+		is.Equal(1.234, f)
 	})
 
-	t.Run("prepend hello [carriage return]", func(t *testing.T) {
-		rescueStdout := os.Stdout
-		r, w, _ := os.Pipe()
-		os.Stdout = w
-
-		input := "Test\r\n"
-		err := processLine(&processLineInput{
-			output: []rune(input),
+	t.Run("parses number [scientific]", func(t *testing.T) {
+		input := "1.234560e+02"
+		f, err := processLine(&processLineInput{
+			line: []rune(input),
 		})
 		is.NoError(err)
+		is.Equal(123.456, f)
+	})
 
-		_ = w.Close()
-		out, _ := ioutil.ReadAll(r)
-		os.Stdout = rescueStdout
-		is.Equal(fmt.Sprintf("hello: %s\n", "Test"), string(out))
+	t.Run("parses number [carriage return]", func(t *testing.T) {
+		input := "1.234\r\n"
+		f, err := processLine(&processLineInput{
+			line: []rune(input),
+		})
+		is.NoError(err)
+		is.Equal(1.234, f)
+	})
+
+	t.Run("parses number [new line]", func(t *testing.T) {
+		input := "1.234\n"
+		f, err := processLine(&processLineInput{
+			line: []rune(input),
+		})
+		is.NoError(err)
+		is.Equal(1.234, f)
 	})
 }
 
 func Test_processReader(t *testing.T) {
 	is := assert.New(t)
 
-	sample := `test1
-test2
-test3`
-
-	t.Run("processes many lines and outputs matches", func(t *testing.T) {
-		rescueStdout := os.Stdout
-		r, w, _ := os.Pipe()
-		os.Stdout = w
-
-		err := processReader(&processReaderInput{
-			reader: bufio.NewReader(strings.NewReader(sample)),
+	t.Run("processes lines and generate sample", func(t *testing.T) {
+		data := `1.234
+test bad line
+1.234560e+02`
+		sample, err := processReader(&processReaderInput{
+			reader: bufio.NewReader(strings.NewReader(data)),
 		})
 		is.NoError(err)
+		is.Len(sample, 2)
+		is.Equal([]float64{1.234, 123.456}, sample)
+	})
 
-		_ = w.Close()
-		out, _ := ioutil.ReadAll(r)
-		os.Stdout = rescueStdout
-		is.Equal("hello: test1\nhello: test2\nhello: test3\n", string(out))
+	t.Run("processes lines and generate sample [carriage return]", func(t *testing.T) {
+		data := "1.234\r\ntest bad line\r\n1.234560e+02\r\n"
+		sample, err := processReader(&processReaderInput{
+			reader: bufio.NewReader(strings.NewReader(data)),
+		})
+		is.NoError(err)
+		is.Len(sample, 2)
+		is.Equal([]float64{1.234, 123.456}, sample)
+	})
+}
+
+func Test_processSample(t *testing.T) {
+	is := assert.New(t)
+
+	t.Run("processes lines and generate sample", func(t *testing.T) {
+		data := []float64{1, 2, 3, 4}
+		result, err := processSample(data)
+		is.NoError(err)
+		is.IsType(ResultSet{}, result)
+		is.Equal(float64(1), result.min)
+		is.Equal(float64(4), result.max)
 	})
 }
