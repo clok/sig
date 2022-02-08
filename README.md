@@ -15,18 +15,19 @@ NAME:
    sig - Statistics in Go - CLI tool for quick statistical analysis of data streams
 
 USAGE:
-   main [global options] command [command options] [arguments...]
+   sig [global options] command [command options] [arguments...]
 
 AUTHOR:
    Derek Smith <derek@clokwork.net>
 
 COMMANDS:
-   hello       say hello
+   simple, s   simple statistics
    version, v  Print version info
    help, h     Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h  show help (default: false)
+   --help, -h     show help (default: false)
+   --version, -v  print the version (default: false)
 
 COPYRIGHT:
    (c) 2022 Derek Smith
@@ -34,6 +35,7 @@ COPYRIGHT:
 
 - [Documentation](./docs/sig.md)
 - [Use Cases](#use-cases)
+    - [Simple](#simple)
 - [Installation](#installation)
     - [Homebrew](#homebrewhttpsbrewsh-for-macos-users)
     - [curl binary](#curl-binary)
@@ -45,7 +47,39 @@ COPYRIGHT:
 
 ## Use Cases
 
-Will be filled out later.
+### Simple
+
+```text
+$ cat tmp/random.log | sig ./main.go simple 
+N       Min     Max     Mean    Mode    Median  Sum     Std Dev Variance        p50     p75     p90     p95     p99     Q1      Q2      Q3      Outliers        Mild    Extreme
+17021   0       255     127.84  70      127     2.176007e+06    74.0224 5479.3108       127     192     231     243     253     64      127     192     0       0       0
+```
+
+```text
+$ cat tmp/random.log | sig simple -t -p 'tmp/*.log'
+N       17021
+Min     0
+Max     255
+Mean    127.84
+Mode    70
+Median  127
+Sum     2.176007e+06
+Std Dev 74.0224
+Variance        5479.3108
+p50     127
+p75     192
+p90     231
+p95     243
+p99     253
+Q1      64
+Q2      127
+Q3      192
+Outliers        0
+Mild    0
+Extreme 0
+```
+
+> More to come ...
 
 ## Installation
 
