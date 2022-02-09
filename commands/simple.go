@@ -91,7 +91,11 @@ var (
 					return err
 				}
 
-				if info.Mode()&os.ModeCharDevice != 0 || info.Size() <= 0 {
+				noNamedPipe := info.Mode()&os.ModeNamedPipe == 0
+				noUnixPipe := info.Mode()&os.ModeCharDevice != 0 || info.Size() <= 0
+				k.Printf("noNamedPipe: %t noUnixPipe: %t\n", noNamedPipe, noUnixPipe)
+
+				if noNamedPipe && noUnixPipe {
 					// if neither, throw error
 					_ = cli.ShowSubcommandHelp(c)
 					return fmt.Errorf("please use this command with a pipe or the --path flag set")
