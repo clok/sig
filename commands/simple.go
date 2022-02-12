@@ -8,16 +8,18 @@ import (
 	"os"
 )
 
-func printRows(res *ResultSet) {
-	var header string
-	for _, field := range res.ListFields() {
-		if header == "" {
-			header = res.GetHeader(field)
-		} else {
-			header = fmt.Sprintf("%s\t%s", header, res.GetHeader(field))
+func printRows(res *ResultSet, noHeader bool) {
+	if !noHeader {
+		var header string
+		for _, field := range res.ListFields() {
+			if header == "" {
+				header = res.GetHeader(field)
+			} else {
+				header = fmt.Sprintf("%s\t%s", header, res.GetHeader(field))
+			}
 		}
+		fmt.Println(header)
 	}
-	fmt.Println(header)
 
 	var row string
 	for _, field := range res.ListFields() {
@@ -53,6 +55,10 @@ var (
 				Name:    "transpose",
 				Aliases: []string{"t"},
 				Usage:   "transpose table output",
+			},
+			&cli.BoolFlag{
+				Name:  "no-header",
+				Usage: "do not print out header",
 			},
 		},
 		Action: func(c *cli.Context) error {
@@ -120,7 +126,7 @@ var (
 			if c.Bool("transpose") {
 				printTranspose(&res)
 			} else {
-				printRows(&res)
+				printRows(&res, c.Bool("no-header"))
 			}
 
 			return nil
