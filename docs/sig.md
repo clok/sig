@@ -21,6 +21,8 @@ sig [GLOBAL OPTIONS] command [COMMAND OPTIONS] [ARGUMENTS...]
 
 simple statistics
 
+**--no-header**: do not print out header
+
 **--path, -p**="": File path to files to stream, can be a glob. If not set, a pipe is assumed.
 
 **--transpose, -t**: transpose table output
