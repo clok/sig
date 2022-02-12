@@ -2,10 +2,22 @@
 ## [Unreleased]
 
 
+<a name="v0.2.0"></a>
+## [v0.2.0] - 2022-02-11
+### Chores
+- **docs:** updating docs for version v0.2.0
+  
+  ### Features
+- **flags:** add support for no-header output
+  
+  
 <a name="v0.1.1"></a>
 ## [v0.1.1] - 2022-02-09
 ### Bug Fixes
 - **pipe:** more robust pipe detection
+  
+  ### Chores
+- **release:** v0.1.1
   
   
 <a name="v0.1.0"></a>
@@ -21,5 +33,6 @@
   - **simple:** laying ground work
   
   
-[Unreleased]: https://github.com/clok/sig/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/clok/sig/compare/v0.2.0...HEAD
+[v0.2.0]: https://github.com/clok/sig/compare/v0.1.1...v0.2.0
 [v0.1.1]: https://github.com/clok/sig/compare/v0.1.0...v0.1.1
