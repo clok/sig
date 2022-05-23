@@ -2,10 +2,24 @@
 ## [Unreleased]
 
 
+<a name="v0.2.1"></a>
+## [v0.2.1] - 2022-05-23
+### Chores
+- **deps:** update actions/setup-go action to v3 ([#4](https://github.com/clok/sig/issues/4))
+  - **deps:** update goreleaser/goreleaser-action action to v3 ([#9](https://github.com/clok/sig/issues/9))
+  - **deps:** update docker/login-action action to v2 ([#8](https://github.com/clok/sig/issues/8))
+  - **deps:** update all non-major dependencies ([#7](https://github.com/clok/sig/issues/7))
+  - **deps:** update all non-major dependencies ([#6](https://github.com/clok/sig/issues/6))
+  - **deps:** update actions/checkout action to v3 ([#5](https://github.com/clok/sig/issues/5))
+  - **deps:** update golangci/golangci-lint-action action to v3 ([#3](https://github.com/clok/sig/issues/3))
+  - **docs:** updating docs for version v0.2.1
+  
+  
 <a name="v0.2.0"></a>
 ## [v0.2.0] - 2022-02-11
 ### Chores
 - **docs:** updating docs for version v0.2.0
+  - **release:** v0.2.0
   
   ### Features
 - **flags:** add support for no-header output
@@ -33,6 +47,7 @@
   - **simple:** laying ground work
   
   
-[Unreleased]: https://github.com/clok/sig/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/clok/sig/compare/v0.2.1...HEAD
+[v0.2.1]: https://github.com/clok/sig/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/clok/sig/compare/v0.1.1...v0.2.0
 [v0.1.1]: https://github.com/clok/sig/compare/v0.1.0...v0.1.1
