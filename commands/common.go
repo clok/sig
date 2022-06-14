@@ -2,12 +2,16 @@ package commands
 
 import (
 	"fmt"
-	"io"
-	"strconv"
-	"strings"
-
 	"github.com/clok/kemba"
 	"github.com/montanaflynn/stats"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
+	"io"
+	"os"
+	"os/exec"
+	"runtime"
+	"strconv"
+	"strings"
 )
 
 var (
@@ -19,6 +23,28 @@ var (
 	kfpd  = kfp.Extend("debug")
 	kfpld = kc.Extend("processLine:debug")
 )
+
+func clearTerminal() error {
+	var cmd *exec.Cmd
+	goos := runtime.GOOS
+	switch goos {
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "cls")
+	case "linux", "darwin":
+		cmd = exec.Command("clear")
+	}
+
+	if cmd == nil {
+		return fmt.Errorf("%s is not supported", runtime.GOOS)
+	}
+
+	cmd.Stdout = os.Stdout
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 func processReader(opts *processReaderInput) ([]float64, error) {
 	var data []rune
@@ -44,23 +70,81 @@ func processReader(opts *processReaderInput) ([]float64, error) {
 			}
 			lines++
 
-			// TODO: Add support for refresh rate
-			// if lines%100 == 0 {
-			//	res, err := processSample(sample)
-			//	if err != nil {
-			//		return nil, err
-			//	}
-			//	var row string
-			//	for _, field := range res.ListFields() {
-			//		if row == "" {
-			//			row = fmt.Sprintf(res.GetFormat(field), res.Get(field))
-			//		} else {
-			//			format := "%s\t" + res.GetFormat(field)
-			//			row = fmt.Sprintf(format, row, res.Get(field))
-			//		}
-			//	}
-			//	fmt.Printf("%s\r", row)
-			// }
+			// reset
+			data = []rune{}
+			kfpd.Println("-- RESET OUTPUT --")
+		}
+	}
+
+	if len(data) > 0 {
+		value, err := processLine(&processLineInput{
+			line: data,
+		})
+		if err != nil && value == 0 {
+			fails++
+		}
+		lines++
+		sample = append(sample, value)
+	}
+	kfpl.Printf("%d / %d lines processed failed to parse", fails, lines)
+	return sample, nil
+}
+
+func processReaderStream(opts *processReaderStreamInput) ([]float64, error) {
+	var data []rune
+	var lines int64
+	var fails int64
+	var sample []float64
+
+	p := message.NewPrinter(language.English)
+
+	// Clear terminal screen
+	err := clearTerminal()
+	if err != nil {
+		return nil, err
+	}
+
+	var steps int64
+	steps = opts.refresh
+	iteration := 0
+	for {
+		input, _, err := opts.reader.ReadRune()
+		if err != nil && err == io.EOF {
+			break
+		}
+		kfpd.Printf("%c", input)
+		data = append(data, input)
+		if input == '\n' {
+			value, err := processLine(&processLineInput{
+				line: data,
+			})
+			if err != nil && value == 0 {
+				fails++
+			} else {
+				sample = append(sample, value)
+			}
+			lines++
+
+			if lines%steps == 0 {
+				res, err := processSample(sample)
+				if err != nil {
+					return nil, err
+				}
+				fmt.Printf("\033[0;0H")
+				for _, field := range res.ListFields() {
+					format := "%s\t" + res.GetFormat(field) + "\n"
+					fmt.Printf(format, res.GetHeader(field), res.Get(field))
+				}
+				steps *= opts.factor
+				if steps > opts.cap {
+					steps = opts.cap
+				}
+				iteration++
+				_, err = p.Printf("\n[%d] next refresh at N modulo %d == 0", iteration, steps)
+				if err != nil {
+					return nil, err
+				}
+			}
 
 			// reset
 			data = []rune{}

@@ -5,59 +5,38 @@ import (
 	"fmt"
 	"github.com/urfave/cli/v2"
 	"github.com/yargevad/filepathx"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 	"os"
 )
 
-func printRows(res *ResultSet, noHeader bool) {
-	if !noHeader {
-		var header string
-		for _, field := range res.ListFields() {
-			if header == "" {
-				header = res.GetHeader(field)
-			} else {
-				header = fmt.Sprintf("%s\t%s", header, res.GetHeader(field))
-			}
-		}
-		fmt.Println(header)
-	}
-
-	var row string
-	for _, field := range res.ListFields() {
-		if row == "" {
-			row = fmt.Sprintf(res.GetFormat(field), res.Get(field))
-		} else {
-			format := "%s\t" + res.GetFormat(field)
-			row = fmt.Sprintf(format, row, res.Get(field))
-		}
-	}
-	fmt.Println(row)
-}
-
-func printTranspose(res *ResultSet) {
-	for _, field := range res.ListFields() {
-		format := "%s\t" + res.GetFormat(field) + "\n"
-		fmt.Printf(format, res.GetHeader(field), res.Get(field))
-	}
-}
-
 var (
-	CommandSimple = &cli.Command{
-		Name:  "simple",
-		Usage: "simple statistics - one time batch process",
+	CommandStream = &cli.Command{
+		Name:  "stream",
+		Usage: "stream process ",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "path",
 				Aliases: []string{"p"},
 				Usage:   "File path to files to stream, can be a glob. If not set, a pipe is assumed.",
 			},
-			&cli.BoolFlag{
-				Name:    "transpose",
-				Aliases: []string{"t"},
-				Usage:   "transpose table output",
+			&cli.Int64Flag{
+				Name:    "refresh",
+				Aliases: []string{"r"},
+				Usage:   "how many rows of data between updates",
+				Value:   100,
 			},
-			&cli.BoolFlag{
-				Name:  "no-header",
-				Usage: "do not print out header",
+			&cli.Int64Flag{
+				Name:    "factor",
+				Aliases: []string{"f"},
+				Usage:   "rate of growth of refresh value",
+				Value:   10,
+			},
+			&cli.Int64Flag{
+				Name:    "cap",
+				Aliases: []string{"c"},
+				Usage:   "max value of refresh rate for updates",
+				Value:   100_000_000,
 			},
 		},
 		Action: func(c *cli.Context) error {
@@ -81,8 +60,11 @@ var (
 					}
 
 					reader := bufio.NewReader(file)
-					inner, err := processReader(&processReaderInput{
-						reader: reader,
+					inner, err := processReaderStream(&processReaderStreamInput{
+						reader:  reader,
+						refresh: c.Int64("refresh"),
+						factor:  c.Int64("factor"),
+						cap:     c.Int64("cap"),
 					})
 					if err != nil {
 						return err
@@ -107,8 +89,11 @@ var (
 				}
 
 				reader := bufio.NewReader(os.Stdin)
-				sample, err = processReader(&processReaderInput{
-					reader: reader,
+				sample, err = processReaderStream(&processReaderStreamInput{
+					reader:  reader,
+					refresh: c.Int64("refresh"),
+					factor:  c.Int64("factor"),
+					cap:     c.Int64("cap"),
 				})
 				if err != nil {
 					return err
@@ -119,13 +104,20 @@ var (
 			if err != nil {
 				return err
 			}
-			// TODO: Add support for refresh rate
-			// fmt.Printf("\033[2K\r")
 
-			if c.Bool("transpose") {
-				printTranspose(&res)
-			} else {
-				printRows(&res, c.Bool("no-header"))
+			// Clear terminal screen
+			err = clearTerminal()
+			if err != nil {
+				return err
+			}
+
+			printTranspose(&res)
+			fmt.Println("")
+
+			p := message.NewPrinter(language.English)
+			_, err = p.Printf("Done. Processed %d rows\n", res.n)
+			if err != nil {
+				return err
 			}
 
 			return nil

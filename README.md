@@ -21,7 +21,8 @@ AUTHOR:
    Derek Smith <derek@clokwork.net>
 
 COMMANDS:
-   simple, s   simple statistics
+   simple      simple statistics - one time batch process
+   stream      stream process
    version, v  Print version info
    help, h     Shows a list of commands or help for one command
 
@@ -36,6 +37,7 @@ COPYRIGHT:
 - [Documentation](./docs/sig.md)
 - [Use Cases](#use-cases)
     - [Simple](#simple)
+    - [Stream](#stream)
 - [Installation](#installation)
     - [Homebrew](#homebrewhttpsbrewsh-for-macos-users)
     - [curl binary](#curl-binary)
@@ -50,13 +52,13 @@ COPYRIGHT:
 ### Simple
 
 ```text
-$ cat tmp/random.log | sig ./main.go simple 
+$ cat tmp/random.log | sig simple 
 N       Min     Max     Mean    Mode    Median  Sum     Std Dev Variance        p50     p75     p90     p95     p99     Q1      Q2      Q3      Outliers        Mild    Extreme
 17021   0       255     127.84  70      127     2.176007e+06    74.0224 5479.3108       127     192     231     243     253     64      127     192     0       0       0
 ```
 
 ```text
-$ cat tmp/random.log | sig simple -t -p 'tmp/*.log'
+$ sig simple -t -p 'tmp/*.log'
 N       17021
 Min     0
 Max     255
@@ -77,6 +79,59 @@ Q3      192
 Outliers        0
 Mild    0
 Extreme 0
+```
+
+### Stream
+
+```text
+$ cat tmp/random.log | sig stream
+N	5000000
+Min	1258
+Max	2084
+Mean	2.28595
+Mode	239
+Median	224.55
+Sum	1.139274e+07
+Std Dev	4.717073
+Variance	22.24969850
+p50	2245
+p75	2245.5
+p90	4445
+p95	5145
+p99	117.55
+Q1	107.5
+Q2	224.55
+Q3	224.55
+Outliers	538195
+Mild	341450
+Extreme	196745
+
+[22] next refresh at N modulo 1,000,000 == 0
+
+... THEN ...
+
+N	11388121
+Min	1
+Max	2084
+Mean	1.56
+Mode	1
+Median	1
+Sum	1.7780861e+07
+Std Dev	3.1893
+Variance	10.1714
+p50	1
+p75	2
+p90	2
+p95	3
+p99	7
+Q1	1
+Q2	1
+Q3	2
+Outliers	538195
+Mild	341450
+Extreme	196745
+
+Done. Processed 11,388,121 rows
 ```
 
 > More to come ...
