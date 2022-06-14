@@ -10,6 +10,13 @@ type processReaderInput struct {
 	reader *bufio.Reader
 }
 
+type processReaderStreamInput struct {
+	reader  *bufio.Reader
+	refresh int64
+	factor  int64
+	cap     int64
+}
+
 type ResultSet struct {
 	n               int
 	min             float64
