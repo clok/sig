@@ -14,8 +14,11 @@ sig
 .SH COMMAND TREE
 .RS
 .IP \(bu 2
-simple, s
-\[la]#simple-s\[ra]
+simple
+\[la]#simple\[ra]
+.IP \(bu 2
+stream
+\[la]#stream\[ra]
 .IP \(bu 2
 version, v
 \[la]#version-v\[ra]
@@ -36,9 +39,9 @@ sig [GLOBAL OPTIONS] command [COMMAND OPTIONS] [ARGUMENTS...]
 
 
 .SH COMMANDS
-.SH simple, s
+.SH simple
 .PP
-simple statistics
+simple statistics - one time batch process
 
 .PP
 \fB--no-header\fP: do not print out header
@@ -48,6 +51,22 @@ simple statistics
 
 .PP
 \fB--transpose, -t\fP: transpose table output
+
+.SH stream
+.PP
+stream process
+
+.PP
+\fB--cap, -c\fP="": max value of refresh rate for updates (default: 100000000)
+
+.PP
+\fB--factor, -f\fP="": rate of growth of refresh value (default: 10)
+
+.PP
+\fB--path, -p\fP="": File path to files to stream, can be a glob. If not set, a pipe is assumed.
+
+.PP
+\fB--refresh, -r\fP="": how many rows of data between updates (default: 100)
 
 .SH version, v
 .PP
