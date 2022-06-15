@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v1.1.0"></a>
+## [v1.1.0] - 2022-06-15
+### Code Refactoring
+- 2x improvement in calculation of metrics ([#12](https://github.com/clok/sig/issues/12))
+  
+  
 <a name="v1.0.0"></a>
 ## [v1.0.0] - 2022-06-14
 ### Bug Fixes
@@ -9,6 +15,7 @@
   
   ### Chores
 - **docs:** updating docs for version v1.0.0
+  - **release:** v1.0.0
   
   ### Features
 - **stream:** add initial support for stream processing and live updates ([#11](https://github.com/clok/sig/issues/11))
@@ -60,7 +67,8 @@
   - **simple:** laying ground work
   
   
-[Unreleased]: https://github.com/clok/sig/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/clok/sig/compare/v1.1.0...HEAD
+[v1.1.0]: https://github.com/clok/sig/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/clok/sig/compare/v0.2.1...v1.0.0
 [v0.2.1]: https://github.com/clok/sig/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/clok/sig/compare/v0.1.1...v0.2.0
