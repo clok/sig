@@ -3,13 +3,14 @@ package commands
 import (
 	"fmt"
 	"github.com/clok/kemba"
-	"github.com/montanaflynn/stats"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"io"
+	"math"
 	"os"
 	"os/exec"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -181,118 +182,158 @@ func processLine(opts *processLineInput) (float64, error) {
 	return f, nil
 }
 
-func processSample(data []float64) (ResultSet, error) {
-	var res ResultSet
-	var err error
+func processSample(data []float64) (res ResultSet, err error) {
+	// Sort list
+	sort.Float64s(data)
+
+	// set data based on sorted slice
 	res.n = len(data)
+	res.min = data[0]
+	res.max = data[res.n-1]
 
-	var min float64
-	min, err = stats.Min(data)
-	if err != nil {
-		return res, err
-	}
-	res.min = min
+	// sum
+	res.sum = calcSum(data)
 
-	var max float64
-	max, err = stats.Max(data)
-	if err != nil {
-		return res, err
-	}
-	res.max = max
+	// unstable mean
+	res.mean = calcMean(data)
 
-	var mean float64
-	mean, err = stats.Mean(data)
-	if err != nil {
-		return res, err
-	}
-	res.mean = mean
+	// median
+	res.median = calcMedian(data)
 
-	var mode []float64
-	mode, err = stats.Mode(data)
-	if err != nil {
-		return res, err
-	}
-	res.mode = mode
+	// mode
+	res.mode = calcMode(data)
 
-	var median float64
-	median, err = stats.Median(data)
-	if err != nil {
-		return res, err
-	}
-	res.median = median
+	// variance
+	res.variance = calcVariance(data, res.mean)
 
-	var sum float64
-	sum, err = stats.Sum(data)
-	if err != nil {
-		return res, err
-	}
-	res.sum = sum
+	// standard deviation
+	res.stdev = math.Sqrt(res.variance)
 
-	var variance float64
-	variance, err = stats.Variance(data)
-	if err != nil {
-		return res, err
-	}
-	res.variance = variance
+	// Percentiles
+	res.p50 = calcPercentile(data, 50)
+	res.p75 = calcPercentile(data, 75)
+	res.p90 = calcPercentile(data, 90)
+	res.p95 = calcPercentile(data, 95)
+	res.p99 = calcPercentile(data, 99)
 
-	var stdev float64
-	stdev, err = stats.StandardDeviation(data)
-	if err != nil {
-		return res, err
+	// quartiles
+	var c1 int
+	var c2 int
+	if res.n%2 == 0 {
+		c1 = res.n / 2
+		c2 = res.n / 2
+	} else {
+		c1 = (res.n - 1) / 2
+		c2 = c1 + 1
 	}
-	res.stdev = stdev
-
-	var p50 float64
-	p50, err = stats.Percentile(data, 50)
-	if err != nil {
-		return res, err
-	}
-	res.p50 = p50
-
-	var p75 float64
-	p75, err = stats.Percentile(data, 75)
-	if err != nil {
-		return res, err
-	}
-	res.p75 = p75
-
-	var p90 float64
-	p90, err = stats.Percentile(data, 90)
-	if err != nil {
-		return res, err
-	}
-	res.p90 = p90
-
-	var p95 float64
-	p95, err = stats.Percentile(data, 95)
-	if err != nil {
-		return res, err
-	}
-	res.p95 = p95
-
-	var p99 float64
-	p99, err = stats.Percentile(data, 99)
-	if err != nil {
-		return res, err
-	}
-	res.p99 = p99
-
-	var qs stats.Quartiles
-	qs, err = stats.Quartile(data)
-	if err != nil {
-		return res, err
-	}
-	res.q1 = qs.Q1
-	res.q2 = qs.Q2
-	res.q3 = qs.Q3
-
-	var outliers stats.Outliers
-	outliers, err = stats.QuartileOutliers(data)
-	if err != nil {
-		return res, err
-	}
-	res.mildOutliers = outliers.Mild
-	res.extremeOutliers = outliers.Extreme
+	res.q1 = calcMedian(data[:c1])
+	res.q2 = res.median
+	res.q3 = calcMedian(data[c2:])
 
 	return res, nil
+}
+
+func calcSum(data []float64) (sum float64) {
+	for _, v := range data {
+		sum += v
+	}
+	return sum
+}
+
+func calcMode(data []float64) (mode []float64) {
+	// Return the data if there's only one number
+	l := len(data)
+	if l == 1 {
+		return data
+	} else if l == 0 {
+		return nil
+	}
+
+	// Traverse sorted array,
+	// tracking the longest repeating sequence
+	mode = make([]float64, 5)
+	cnt, maxCnt := 1, 1
+	for i := 1; i < l; i++ {
+		switch {
+		case data[i] == data[i-1]:
+			cnt++
+		case cnt == maxCnt && maxCnt != 1:
+			mode = append(mode, data[i-1])
+			cnt = 1
+		case cnt > maxCnt:
+			mode = append(mode[:0], data[i-1])
+			maxCnt, cnt = cnt, 1
+		default:
+			cnt = 1
+		}
+	}
+	switch {
+	case cnt == maxCnt:
+		mode = append(mode, data[l-1])
+	case cnt > maxCnt:
+		mode = append(mode[:0], data[l-1])
+		maxCnt = cnt
+	}
+
+	// Since length must be greater than 1,
+	// check for slices of distinct values
+	if maxCnt == 1 || len(mode)*maxCnt == l && maxCnt != l {
+		return []float64{}
+	}
+
+	return mode
+}
+
+func calcVariance(data []float64, mean float64) (variance float64) {
+	// Sum the square of the mean subtracted from each number
+	for _, n := range data {
+		variance += (n - mean) * (n - mean)
+	}
+
+	// mean of the squared differences
+	return variance / float64(len(data))
+}
+
+func calcMean(data []float64) float64 {
+	var sum float64
+	for _, v := range data {
+		sum += v
+	}
+	return sum / float64(len(data))
+}
+
+func calcMedian(data []float64) (median float64) {
+	n := len(data)
+	if n%2 == 0 {
+		median = calcMean(data[n/2-1 : n/2+1])
+	} else {
+		median = data[n/2]
+	}
+	return median
+}
+
+func calcPercentile(data []float64, percentile float64) (result float64) {
+	// generate predicted index
+	index := (percentile / 100) * float64(len(data))
+
+	// Check if the index is a whole number
+	if index == float64(int64(index)) {
+
+		// Convert float to int
+		idx := int(index)
+
+		// Find the value at the index
+		result = data[idx-1]
+
+	} else {
+
+		// Convert float to int via truncation
+		idx := int(index)
+
+		// Find the average of the index and following values
+		result = calcMean([]float64{data[idx-1], data[idx]})
+
+	}
+
+	return result
 }
