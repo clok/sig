@@ -2,9 +2,18 @@
 ## [Unreleased]
 
 
+<a name="v1.1.1"></a>
+## [v1.1.1] - 2022-06-16
+### Chores
+- **math:** add unit tests ([#13](https://github.com/clok/sig/issues/13))
+  
+  
 <a name="v1.1.0"></a>
 ## [v1.1.0] - 2022-06-15
-### Code Refactoring
+### Chores
+- **release:** v1.1.0
+  
+  ### Code Refactoring
 - 2x improvement in calculation of metrics ([#12](https://github.com/clok/sig/issues/12))
   
   
@@ -67,7 +76,8 @@
   - **simple:** laying ground work
   
   
-[Unreleased]: https://github.com/clok/sig/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/clok/sig/compare/v1.1.1...HEAD
+[v1.1.1]: https://github.com/clok/sig/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/clok/sig/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/clok/sig/compare/v0.2.1...v1.0.0
 [v0.2.1]: https://github.com/clok/sig/compare/v0.2.0...v0.2.1
