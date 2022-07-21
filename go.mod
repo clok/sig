@@ -1,18 +1,18 @@
 module github.com/clok/sig
 
-go 1.17
+go 1.18
 
 require (
 	github.com/clok/cdocs v1.2.0
 	github.com/clok/kemba v1.2.0
-	github.com/stretchr/testify v1.7.2
-	github.com/urfave/cli/v2 v2.8.1
+	github.com/stretchr/testify v1.8.0
+	github.com/urfave/cli/v2 v2.11.1
 	github.com/yargevad/filepathx v1.0.0
 	golang.org/x/text v0.3.7
 )
 
 require (
-	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gookit/color v1.5.1 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
