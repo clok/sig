@@ -2,10 +2,22 @@
 ## [Unreleased]
 
 
+<a name="v1.2.0"></a>
+## [v1.2.0] - 2024-01-09
+### Bug Fixes
+- **deps:** update module golang.org/x/text to v0.3.8 [security] ([#15](https://github.com/clok/sig/issues/15))
+  
+  ### Chores
+- bump go version to 1.18 for generics support ([#25](https://github.com/clok/sig/issues/25))
+  - **ci:** fix ci tools ([#24](https://github.com/clok/sig/issues/24))
+  - **deps:** update all non-major dependencies ([#14](https://github.com/clok/sig/issues/14))
+  
+  
 <a name="v1.1.1"></a>
 ## [v1.1.1] - 2022-06-16
 ### Chores
 - **math:** add unit tests ([#13](https://github.com/clok/sig/issues/13))
+  - **release:** v1.1.1
   
   
 <a name="v1.1.0"></a>
@@ -33,12 +45,12 @@
 <a name="v0.2.1"></a>
 ## [v0.2.1] - 2022-05-23
 ### Chores
-- **deps:** update actions/checkout action to v3 ([#5](https://github.com/clok/sig/issues/5))
-  - **deps:** update actions/setup-go action to v3 ([#4](https://github.com/clok/sig/issues/4))
-  - **deps:** update goreleaser/goreleaser-action action to v3 ([#9](https://github.com/clok/sig/issues/9))
+- **deps:** update goreleaser/goreleaser-action action to v3 ([#9](https://github.com/clok/sig/issues/9))
   - **deps:** update docker/login-action action to v2 ([#8](https://github.com/clok/sig/issues/8))
   - **deps:** update all non-major dependencies ([#7](https://github.com/clok/sig/issues/7))
   - **deps:** update all non-major dependencies ([#6](https://github.com/clok/sig/issues/6))
+  - **deps:** update actions/checkout action to v3 ([#5](https://github.com/clok/sig/issues/5))
+  - **deps:** update actions/setup-go action to v3 ([#4](https://github.com/clok/sig/issues/4))
   - **deps:** update golangci/golangci-lint-action action to v3 ([#3](https://github.com/clok/sig/issues/3))
   - **docs:** updating docs for version v0.2.1
   - **release:** v0.2.1
@@ -76,7 +88,8 @@
   - **simple:** laying ground work
   
   
-[Unreleased]: https://github.com/clok/sig/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/clok/sig/compare/v1.2.0...HEAD
+[v1.2.0]: https://github.com/clok/sig/compare/v1.1.1...v1.2.0
 [v1.1.1]: https://github.com/clok/sig/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/clok/sig/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/clok/sig/compare/v0.2.1...v1.0.0
