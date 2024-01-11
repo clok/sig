@@ -8,7 +8,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/urfave/cli/v2 v2.27.1
 	github.com/yargevad/filepathx v1.0.0
-	golang.org/x/text v0.3.8
+	golang.org/x/text v0.14.0
 )
 
 require (
