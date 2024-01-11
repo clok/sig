@@ -2,6 +2,19 @@
 ## [Unreleased]
 
 
+<a name="v1.2.1"></a>
+## [v1.2.1] - 2024-01-10
+### Bug Fixes
+- **deps:** update module golang.org/x/text to v0.14.0 ([#26](https://github.com/clok/sig/issues/26))
+  
+  ### Chores
+- **deps:** update dependency ubuntu to v22 ([#19](https://github.com/clok/sig/issues/19))
+  - **deps:** update goreleaser/goreleaser-action action to v5 ([#21](https://github.com/clok/sig/issues/21))
+  - **deps:** update actions/setup-go action to v5 ([#23](https://github.com/clok/sig/issues/23))
+  - **deps:** update docker/login-action action to v3 ([#22](https://github.com/clok/sig/issues/22))
+  - **deps:** update actions/checkout action to v4 ([#20](https://github.com/clok/sig/issues/20))
+  
+  
 <a name="v1.2.0"></a>
 ## [v1.2.0] - 2024-01-09
 ### Bug Fixes
@@ -11,6 +24,7 @@
 - bump go version to 1.18 for generics support ([#25](https://github.com/clok/sig/issues/25))
   - **ci:** fix ci tools ([#24](https://github.com/clok/sig/issues/24))
   - **deps:** update all non-major dependencies ([#14](https://github.com/clok/sig/issues/14))
+  - **release:** v1.2.0
   
   
 <a name="v1.1.1"></a>
@@ -88,7 +102,8 @@
   - **simple:** laying ground work
   
   
-[Unreleased]: https://github.com/clok/sig/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/clok/sig/compare/v1.2.1...HEAD
+[v1.2.1]: https://github.com/clok/sig/compare/v1.2.0...v1.2.1
 [v1.2.0]: https://github.com/clok/sig/compare/v1.1.1...v1.2.0
 [v1.1.1]: https://github.com/clok/sig/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/clok/sig/compare/v1.0.0...v1.1.0
